@@ -66,5 +66,17 @@ namespace HolyBot.Razebator.level {
                 return 0.6F;
             }
         }
+
+        public AABB[] getHitbox() {
+            return hitbox;
+        }
+
+        public bool collide(AABB hb) {
+            foreach (AABB h in hitbox) {
+                if (h.collide(hb))
+                    return true;
+            }
+            return false;
+        }
     }
 }

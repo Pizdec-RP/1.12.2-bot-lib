@@ -190,7 +190,7 @@ namespace HolyBot.Razebator.listeners {
             xzcollided = false;
 
             blockUnder = client.getWorld().getBlock(client.getPosition().floor().add(0, -1, 0));
-            if (client.foodlvl <= 6)
+            if (client.food <= 6)
                 RUN = false;
 
             walksAndOtherShit();

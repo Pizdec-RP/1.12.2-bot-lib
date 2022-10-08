@@ -284,6 +284,13 @@ namespace HolyBot.Razebator {
             this.id = id;
         }
 
+        public bool isInLiquid() {
+            foreach (Vector3D corner in getHitbox().getCorners()) {
+
+            }
+            return false;
+        }
+
         public Vector3D getEyeLocation() {
             return getPositionInt().add(0.5, 1.75, 0.5);
         }

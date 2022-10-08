@@ -13,7 +13,7 @@ namespace HolyBot.Razebator.data {
         public string name;
         public double hardnes;
         public short stackSize;
-        public AABB[]? hitbox;
+        public AABB[] hitbox;
         public bool diggable = false;
         public string material;
         public Dictionary<string, bool> harvestTools = new Dictionary<string, bool>();

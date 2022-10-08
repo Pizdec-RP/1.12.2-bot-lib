@@ -11,25 +11,21 @@ namespace HolyBot.Razebator.level {
     internal class Block {
         public Vector3D pos;
         public int id;
-        public string ?displayName;
-        public string ?name;
-        public double ?hardnes;
-        public short ?stackSize;
-        public AABB[] ?hitbox;
-        public string ?material;
-        public Dictionary<string, bool> ?harvestTools = new Dictionary<string, bool>();
+        public string displayName;
+        public string name;
+        public double hardnes;
+        public short stackSize;
+        public AABB[] hitbox;
+        public string material;
+        public Dictionary<string, bool> harvestTools = new Dictionary<string, bool>();
         //public Dictionary<string, int> ?drops = new Dictionary<string, int>();
-        public bool ?transparent;
-        public double ?resistance;
+        public bool transparent;
+        public double resistance;
 
         public int metadata;
         
-        public Block(Vector3D pos) : this(pos, 0) {
+        public Block(Vector3D pos) : this(pos, new BlockState(0,0)) {
 
-        }
-        public Block(Vector3D pos, int id) {
-            this.id = id;
-            this.pos = pos;
         }
         public Block(Vector3D pos, BlockState state) {
             this.pos = pos;
@@ -41,22 +37,34 @@ namespace HolyBot.Razebator.level {
                 this.name = db.name;
                 this.hardnes = db.hardnes;
                 this.stackSize = db.stackSize;
-                this.hitbox = Block.hitboxFromId(id, metadata);
+                this.hitbox = new AABB[db.hitbox.Length];
+                int i = 0;
+                foreach (AABB h in db.hitbox) {
+                    this.hitbox[i] = h.clone();
+                    i++;
+                }
                 this.material = db.material;
                 this.harvestTools = db.harvestTools;
                 this.transparent = db.transparent;
                 this.resistance = db.resistance;
             } else {
-                Console.WriteLine("ti eblan? id "+id+" ne bivaet, ti che ahuel?");
+                Console.WriteLine("ti eblan? id "+state.ToString()+" ne bivaet, ti che ahuel?");
             }
         }
 
-        public static AABB[] hitboxFromId(int id, int metadata) {
-            List<AABB> list = new List<AABB>();
 
-
-
-            return list.ToArray();
+        public float getfriction() {
+            if (id == 165) {//slime
+                return 0.8F;
+            } else if (id == 174) {//packed ice
+                return 0.98F;
+            } else if (id == 79) {//ice
+                return 0.98F;
+            } else if (id == 212) {//frosted ice
+                return 0.98F;
+            } else {
+                return 0.6F;
+            }
         }
     }
 }

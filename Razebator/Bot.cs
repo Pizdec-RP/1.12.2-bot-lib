@@ -49,7 +49,7 @@ namespace HolyBot.Razebator {
 
         public Level world;
 
-        public Bot(String name, String host, Level worldlink) {
+        public Bot(String name, String host, Level ?worldlink) {
             this.name = name;
             if (host.Contains(":")) {
                 this.host = host.Split(":")[0];
@@ -58,8 +58,16 @@ namespace HolyBot.Razebator {
                 this.host = host;
                 this.port = 25565;
             }
-            world = worldlink;
+            if (worldlink == null) {
+                world = new Level();
+            } else {
+                world = worldlink;
+            }
             Console.WriteLine("bot created");
+        }
+
+        internal Level getWorld() {
+            return world;
         }
 
         public void destroy() {

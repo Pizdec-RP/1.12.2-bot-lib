@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HolyBot.Razebator.level;
+using HolyBot.Razebator.math;
 
 namespace HolyBot.Razebator.listeners {
     internal class DefaultListener : SessionListener {
@@ -27,13 +28,13 @@ namespace HolyBot.Razebator.listeners {
             if (packet is ServerJoinGamePacket p) {
                 //renderDist
                 client.setId(p.EntityId);
-                //physics sleep
-                //wait for chunks and start tickloop
+                client.physics.sleepticks = 600;
+                client.physics.state = State.waitForPosPacket;
                 //connected = true;
                 client.gamemode = p.GameMode;
                 client.send(new ClientSettingsPacket(
                     "ru",
-                    (byte) 5,
+                    (byte)5,
                     ChatVisibility.FULL,
                     false,
                     new List<SkinPart>() { 
@@ -50,18 +51,19 @@ namespace HolyBot.Razebator.listeners {
                 //client.send(new ClientPluginMessagePacket("minecraft:brand", new byte[] { 7, 118, 97, 110, 105, 108, 108, 97 }));
             } else if (packet is ServerPlayerPositionRotationPacket p1) {
                 client.send(new ClientTeleportConfirmPacket(p1.TeleportId));
-                client.physics.sleepticks += 2;
+                client.physics.sleepticks = 2;
                 client.setPosX(p1.X);
                 client.setPosY(p1.Y);
                 client.setPosZ(p1.Z);
-                //client.pm.before = new Vector3D(packet.getX(), packet.getY(), packet.getZ());
+                client.physics.before = new Vector3D(p1.X, p1.Y, p1.Z);
                 client.setYaw(p1.Yaw);
                 client.setPitch(p1.Pitch);
-                //client.pm.beforePitch = packet.getPitch();
-                //client.pm.beforeYaw = packet.getYaw();
+                client.physics.beforePitch = p1.Pitch;
+                client.physics.beforeYaw = p1.Yaw;
                 // BotU.log("pos packet received x:"+packet.getX()+" y:"+packet.getY()+" z:"+packet.getZ()+" yaw:"+packet.getYaw()+" pitch:"+packet.getPitch());
                 client.send(new ClientPlayerPositionRotationPacket(client.getPosX(), client.getPosY(), client.getPosZ(), client.getYaw(), client.getPitch(), client.onGround));
                 //client request packet with stats
+                client.send(new ClientRequestPacket(ClientRequest.STATS));
                 client.physics.reset();
 
                 //Close window if window open block sqrt > 8

@@ -25,7 +25,7 @@ namespace HolyBot.Razebator.level {
             //List<string> tl = new List<string>();
             foreach (JObject block in blocks) {
                 if (block.ContainsKey("variations")) {
-                    try {
+                    //try {
                         DatamineBlock skel = new DatamineBlock();
                         skel.id = block.GetValue("id").ToObject<int>();
                         skel.metadata = 0;
@@ -48,9 +48,9 @@ namespace HolyBot.Razebator.level {
                             blockList.Add(temp.id + "." + variation.GetValue("metadata").ToObject<int>(), temp);
                             mn++;
                         }
-                    } catch (Exception ex) {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    //} catch (Exception ex) {
+                    //    Console.WriteLine(ex.ToString());
+                    //}
                 } else {
                     try {
                         DatamineBlock temp = new DatamineBlock();
@@ -88,6 +88,10 @@ namespace HolyBot.Razebator.level {
             }
         }
 
+        public Block getBlock(double x, double y, double z) {
+            return this.getBlock(new Vector3D(x,y,z));
+        }
+
         public Block getBlock(Vector3D pos) {
             /*if (pos.y < 0 || pos.y > 256) {
                 return new Block(pos.floor(),0,0);
@@ -117,32 +121,21 @@ namespace HolyBot.Razebator.level {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public static string text = System.IO.File.ReadAllText("C:\\Users\\qm080\\Desktop\\HolyBot\\datamine\\colliders.json");
         public static JObject json = JObject.Parse(text);
 
         public static AABB[] getMultipileHitbox(string blockname, int metadatanum, int statescount) {
             if (JsonU.isItValueOf<int>(json["blocks"][blockname])) {// hbid = 1
-                int hbid = json[blockname].Value<int>();
-                double[] h = json["shapes"][hbid.ToString()].ToObject<double[]>();
-                return new AABB[] { new AABB(h) };
+                //Console.WriteLine("chck "+blockname);
+                int hbid = json["blocks"][blockname].Value<int>();
+                
+                double[][] h = json["shapes"][hbid.ToString()].ToObject<double[][]>();
+                if (h.Length == 0) {
+                    return new AABB[0];
+                }
+                return new AABB[] { new AABB(h[0]) };
             } else if (JsonU.isItValueOf<int[]>(json["blocks"][blockname])) {// hbids = [1,2]
-                int[] hbids = json["blocks"][blockname].Value<int[]>();
+                int[] hbids = json["blocks"][blockname].ToObject<int[]>();
                 int hitboxescount = hbids.Length;
                 if (hitboxescount % statescount == 0) {
                     int delta = hitboxescount / statescount; //сколько чисел приходится на 1 стейт (2)

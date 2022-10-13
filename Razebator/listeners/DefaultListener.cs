@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HolyBot.Razebator.level;
 using HolyBot.Razebator.math;
+using HolyBot.Razebator.utils;
 
 namespace HolyBot.Razebator.listeners {
     internal class DefaultListener : SessionListener {
@@ -29,7 +30,9 @@ namespace HolyBot.Razebator.listeners {
                 //renderDist
                 client.setId(p.EntityId);
                 client.physics.sleepticks = 600;
-                client.physics.state = State.waitForPosPacket;
+                client.physics.ready = false;
+                client.physics.posReceived = false;
+                client.physics.chunkReceived = false;
                 //connected = true;
                 client.gamemode = p.GameMode;
                 client.send(new ClientSettingsPacket(
@@ -60,9 +63,12 @@ namespace HolyBot.Razebator.listeners {
                 client.setPitch(p1.Pitch);
                 client.physics.beforePitch = p1.Pitch;
                 client.physics.beforeYaw = p1.Yaw;
-                // BotU.log("pos packet received x:"+packet.getX()+" y:"+packet.getY()+" z:"+packet.getZ()+" yaw:"+packet.getYaw()+" pitch:"+packet.getPitch());
+                BotU.log("pos packet received x:"+p1.X+" y:"+ p1.Y+ " z:"+ p1.Z+ " yaw:"+ p1.Yaw+ " pitch:"+ p1.Pitch);
                 client.send(new ClientPlayerPositionRotationPacket(client.getPosX(), client.getPosY(), client.getPosZ(), client.getYaw(), client.getPitch(), client.onGround));
-                //client request packet with stats
+                client.physics.posReceived = true;
+                if (!client.getWorld().columns.ContainsKey(client.GetChunkCoordinates())) {
+                    client.physics.chunkReceived = false;
+                }
                 client.send(new ClientRequestPacket(ClientRequest.STATS));
                 client.physics.reset();
 
@@ -93,7 +99,11 @@ namespace HolyBot.Razebator.listeners {
             } else if (packet is ServerChunkDataPacket p6) {
                 Column col = p6.Column;
                 ChunkCoordinates cc = new ChunkCoordinates(col.X, col.Z);
-                client.world.columns.Add(cc,col);
+                if (client.world.columns.ContainsKey(cc)) {
+                    client.world.columns[cc] = col;
+                } else {
+                    client.world.columns.Add(cc, col);
+                }
                 if (cc.Equals(client.GetChunkCoordinates())) {
                     client.running = true;
                 }

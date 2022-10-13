@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +44,22 @@ namespace HolyBot.Razebator.utils {
             put("ю","|-0");
         }
     };*/
+        public static string formMsg(string message) {
+            BotU.log(message);
+            JObject json = JObject.Parse(message);
+            string s = ""; //= json.GetValue("with").ToArray<JObject>()[1].Value<string>;
+            if (json.ContainsKey("with")) {
+                JArray args = json.GetValue("with").ToObject<JArray>();
+                for (int i = 0; i < args.Count; i++) {
+                    if (JsonU.isItValueOf<JValue>(args[i])) {
+                        s += ((JValue)args[i]).ToObject<string>();
+                    } else {
+                        //BotU.log(args[i].GetType().ToString()); da poshel ti nahuy
+                    }
+                }
+            }
+            return s;
+        }
 
         /*public static String componentToString(Component smth) {
             //System.out.println(packet.getMessage().toString());
@@ -73,7 +90,7 @@ namespace HolyBot.Razebator.utils {
             }
 		    return message.toString();
 	    }*/
-    
+
         public static bool contains(List<String> list, String what) {
             foreach (String str in list) {
                 if (str.Contains(what))

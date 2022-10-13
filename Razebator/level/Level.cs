@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace HolyBot.Razebator.level {
     internal class Level {
-        public static Dictionary<string, DatamineBlock> blockList = new Dictionary<string, DatamineBlock>();// key = id + "." + metadata
+        public static Dictionary<BlockState, DatamineBlock> blockList = new Dictionary<BlockState, DatamineBlock>();// key = id + "." + metadata
         //JObject a;
 
         public Dictionary<ChunkCoordinates, Column> columns = new Dictionary<ChunkCoordinates, Column>();
@@ -45,7 +45,7 @@ namespace HolyBot.Razebator.level {
                                 temp.displayName = variation.GetValue("displayName").ToObject<string>();
                             
                             temp.hitbox = getMultipileHitbox(skel.name, mn, variation.Count);
-                            blockList.Add(temp.id + "." + variation.GetValue("metadata").ToObject<int>(), temp);
+                            blockList.Add(new BlockState(temp.id,variation.GetValue("metadata").ToObject<int>()), temp);
                             mn++;
                         }
                     //} catch (Exception ex) {
@@ -64,7 +64,7 @@ namespace HolyBot.Razebator.level {
                         temp.transparent = block.GetValue("transparent").ToObject<bool>();
                         temp.resistance = block.GetValue("resistance").ToObject<double>();
                         temp.hitbox = getSingleStateHitbox(temp.name);
-                        blockList.Add(temp.id + ".0", temp);
+                        blockList.Add(new BlockState(temp.id,0), temp);
                     } catch (Exception e) {
                         Console.WriteLine(block.GetValue("id").ToObject<int>()+" is broken");
                         Console.WriteLine(e.ToString());
@@ -103,7 +103,12 @@ namespace HolyBot.Razebator.level {
                 int chunkX = (int)Math.Floor(pos.getX()) >> 4;
                 int chunkY = (int)Math.Floor(pos.getY()) >> 4;
                 int chunkZ = (int)Math.Floor(pos.getZ()) >> 4;
-                Chunk cc = columns[new ChunkCoordinates(chunkX, chunkZ)].Chunks[chunkY];
+                Column ?chunks = columns[new ChunkCoordinates(chunkX, chunkZ)];
+                if (chunks != null) {
+                    BotU.log("cant get block ");
+                    return new Block(pos);
+                }
+                Chunk cc = chunks.Chunks[chunkY];
                 if (cc == null)
                     return new Block(pos);
                 BlockState state = cc.Storage[bx, by, bz];
@@ -148,21 +153,21 @@ namespace HolyBot.Razebator.level {
                             toreturn[i] = new AABB(ar);
                         } catch {
                             //Console.WriteLine("cant get " + i + " of " + (ints.Length - 1));
-                            Console.WriteLine("!");
+                            //Console.WriteLine("!");
                         }
                     }
                     return toreturn;
                 } else {
-                    Console.WriteLine("polniy pizdec "+blockname);
+                    //Console.WriteLine("polniy pizdec "+blockname);
                     return new AABB[] { new AABB(0, 0, 0, 1, 1, 1) };
                 }
             } else {
-                Console.WriteLine("unknown value for " + blockname);
+                //Console.WriteLine("unknown value for " + blockname);
                 return new AABB[] { new AABB(0, 0, 0, 1, 1, 1) };
             }
         }
 
-        public static AABB[]? getSingleStateHitbox(string blockname) {
+        public static AABB[] getSingleStateHitbox(string blockname) {
             try {
                 JToken bl = json["blocks"][blockname];
                 JValue block = (JValue)bl;
@@ -170,8 +175,8 @@ namespace HolyBot.Razebator.level {
                 JArray array = (JArray)json["shapes"]["" + code]; //jobj
                 double[][] arr = array.ToObject<double[][]>(); //arr = [[0.0,0.0,0.0,1.0,1.0,1.0]]
                 if (arr.Length == 0) {// arr = []
-                    Console.WriteLine("empty hitbox for " + blockname);
-                    return null;
+                    //Console.WriteLine("empty hitbox for " + blockname);
+                    return new AABB[0];
                 } else { //arr = [[0.0,0.0,0.0,1.0,1.0,1.0]]
                     string scode = code.ToString();// scode = "1"
                     if (arr.Length == 1) { //arr = [[0.0,0.0,0.0,1.0,1.0,1.0]]
@@ -180,7 +185,7 @@ namespace HolyBot.Razebator.level {
                         return new AABB[] { value };
                         //Console.WriteLine("added normal hitbox");
                     } else { //arr = [[0.0,0.0,0.0,1.0,1.0,1.0][0.0,0.0,0.0,1.0,1.0,1.0]]
-                        Console.WriteLine("metadata > 1 for " + blockname);
+                        //Console.WriteLine("metadata > 1 for " + blockname);
                         int i = 0;
                         AABB[] ta = new AABB[arr.Length];  //arr.Length = 2
                         foreach (double[] a in arr) { //a = [0.0,0.0,0.0,1.0,1.0,1.0], a = [0.0,0.0,0.0,1.0,1.0,1.0]
@@ -193,7 +198,7 @@ namespace HolyBot.Razebator.level {
                     }
                 }
             } catch (Exception e) {
-                Console.WriteLine("replaced "+blockname+" to 1x1 hitbox");
+                //Console.WriteLine("replaced "+blockname+" to 1x1 hitbox");
                 AABB r = new AABB(0, 0, 0, 1, 1, 1);
                 if (blockname.Contains(blockname))
                     r.maxY = 1.5;

@@ -47,5 +47,9 @@ namespace HolyBot.Razebator.utils {
             double distance = Math.Sqrt(Math.Pow(one.getX() - IIdPoint.getX(), 2) + Math.Pow(one.getZ() - IIdPoint.getZ(), 2));
             return distance;
         }
+
+        public static bool equals(Vector3D first, Vector3D second) {
+            return first.x == second.x && first.y == second.y && first.z == second.z;
+        }
     }
 }

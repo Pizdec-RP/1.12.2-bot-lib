@@ -31,7 +31,7 @@ namespace HolyBot.Razebator.level {
             this.pos = pos;
             this.id = state.Id;
             this.metadata = state.Data;
-            DatamineBlock db = Level.blockList[id+"."+this.metadata];
+            DatamineBlock db = Level.blockList[new BlockState(id,this.metadata)];
             if (db != null) {
                 this.displayName = db.displayName;
                 this.name = db.name;
@@ -77,6 +77,44 @@ namespace HolyBot.Razebator.level {
                     return true;
             }
             return false;
+        }
+
+        public bool isLiquid() {
+            return name.Contains("water") | name.Contains("lava");
+        }
+
+        public bool isWater() {
+            return name.Contains("water");
+        }
+
+        public bool isLava() {
+            return name.Contains("lava");
+        }
+
+        public double minY() {
+            double d = double.MaxValue;
+            foreach (AABB h in hitbox) {
+                if (h.minY < d)
+                    d = h.minY;
+            }
+            if (d == Double.MaxValue)
+                return pos.y;
+            return d;
+        }
+
+        public bool isAvoid() {
+            return hitbox.Length == 0;
+        }
+
+        public double maxY() {
+            double d = double.MinValue;
+            foreach (AABB h in hitbox) {
+                if (h.maxY < d)
+                    d = h.maxY;
+            }
+            if (d == Double.MinValue)
+                return pos.y;
+            return d;
         }
     }
 }

@@ -11,38 +11,49 @@ using HolyBot.Razebator.math;
 using HolyBot.Razebator.utils;
 using McProtoNet.Core;
 using McProtoNet.Core.Protocol;
+using McProtoNet.Protocol340;
 using McProtoNet.Protocol340.Data;
 using McProtoNet.Protocol340.Packets.Client.Game;
 using Starksoft.Net.Proxy;
 
 namespace HolyBot.Razebator {
     internal class Bot : IDisposable {
+        //main 
         public String name;
         //public Proxy proxy;
         public String host;
         public ushort port;
 
+        //listeners
         public List<SessionListener> listeners = new List<SessionListener>();
         public List<BotControler> controlers = new List<BotControler>();//it roll you cunt
 
+        //tick
         public Thread tickThread;
         static byte tickrate = 50;
         public bool running = false;
+        public int tickCounter = 0;
 
+        //session
         TcpClient tcpClient;
         IPacketReaderWriter client;
         ISession session;
 
+        //ingame data
         public double posX=0, posY=0, posZ=0 ;
         public double velX=0, velY=0, velZ=0;
         public float pitch = 0, yaw = 0;//p-updown/y-leftright
-        public bool onGround;
+        public bool onGround = true;
+        public bool isHoldSlowdownItem = false;
         public double health = 20;
         public double food = 10;
         public double saturation = 5;
         public GameMode gamemode;
+        public Effects effects = new Effects();
 
         public PhysicsControler physics;
+        public LivecycleControler rl;
+        public ChatListener chatListener;
 
         int id;//bot entity id
         Guid uuid;
@@ -94,6 +105,10 @@ namespace HolyBot.Razebator {
             client.SendPacket(p);
         }
 
+        public void chat(string s) {
+            send(new ClientChatPacket(s));
+        }
+
         public Bot connect() {
 
 
@@ -106,10 +121,16 @@ namespace HolyBot.Razebator {
             listeners.Add(new DefaultListener(this));
 
             physics = new PhysicsControler(this);
-            controlers.Add(physics);
+            //controlers.Add(physics);
+
+            rl = new LivecycleControler(this);
+            controlers.Add(rl);
+
+            chatListener = new ChatListener(this);
+            listeners.Add(chatListener);
 
             client.OnPacketReceived += (pm, packet) => {
-                Console.WriteLine("packet: " + packet.GetType().Name);
+                //Console.WriteLine("packet: " + packet.GetType().Name);
                 foreach (SessionListener listener in listeners) {
                     listener.onPacket(packet);
                 }
@@ -117,6 +138,7 @@ namespace HolyBot.Razebator {
             
             this.tickThread = new Thread(this.tickLoop);
             this.tickThread.Start();
+            running = true;
             Console.WriteLine("bot connected");
             session.Login();
             return this;
@@ -130,20 +152,25 @@ namespace HolyBot.Razebator {
             int curcomp = 0;
             int needtocompensate = 0;
             while (true) {
+                //Console.WriteLine("tick ready: "+this.physics.ready+" c:"+this.physics.chunkReceived+" p:"+this.physics.posReceived);
                 if (!running)
                     break;
                 long timeone = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                if (isOnline())
+                if (isOnline()) {
                     tick();
+                    tickCounter++;
+                    if (tickCounter >= 100)
+                        tickCounter = 0;
+                }
                 long timetwo = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 int raznica = (int)(timetwo - timeone);
                 if (needtocompensate > 5000) {
                     needtocompensate = 0;
-                    //BotU.log("client overloaded, skiped "+needtocompensate/tickrate+" ticks");
+                    Console.WriteLine("client overloaded, skiped "+needtocompensate/tickrate+" ticks");
                 }
                 if (raznica > 0 && raznica < tickrate) {
                     curcomp = tickrate - raznica;
-                    //if (Main.debug) System.out.println("comp "+raznica+"ms");
+                    Console.WriteLine("comp "+raznica+"ms");
                     if (needtocompensate <= 0) {
                         Thread.Sleep(curcomp);
                     } else {
@@ -156,7 +183,7 @@ namespace HolyBot.Razebator {
                         needtocompensate -= tickrate;
                     }
                 } else {
-                    //if (Main.debug) System.out.println("pass "+raznica+"ms");
+                    Console.WriteLine("pass "+raznica+"ms");
                     needtocompensate += raznica - tickrate;
                 }
             }
@@ -286,9 +313,41 @@ namespace HolyBot.Razebator {
 
         public bool isInLiquid() {
             foreach (Vector3D corner in getHitbox().getCorners()) {
-
+                if (getWorld().getBlock(corner).isLiquid()) {
+                    return true;
+                }
             }
             return false;
+        }
+
+        public bool isInWater() {
+            foreach (Vector3D corner in getHitbox().getCorners()) {
+                if (getWorld().getBlock(corner).isWater()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool isInLava() {
+            foreach (Vector3D corner in getHitbox().getCorners()) {
+                if (getWorld().getBlock(corner).isLava()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void setposto(Vector3D pos) {
+            this.posX = pos.x;
+            this.posY = pos.y;
+            this.posZ = pos.z;
+        }
+
+        public void setposto(double x, double y, double z) {
+            this.posX = x;
+            this.posY = y;
+            this.posZ = z;
         }
 
         public Vector3D getEyeLocation() {
@@ -313,6 +372,12 @@ namespace HolyBot.Razebator {
 
         public ChunkCoordinates GetChunkCoordinates() {
             return new ChunkCoordinates((int)Math.Floor(posX) >> 4, (int)Math.Floor(posZ) >> 4);
+        }
+
+        public void velAdd(double x, double y, double z) {
+            this.velX += x;
+            this.velY += y;
+            this.velZ += z;
         }
     }
 }

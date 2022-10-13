@@ -159,5 +159,9 @@ namespace HolyBot.Razebator.math
         public override int GetHashCode() {
             return HashCode.Combine(x, y, z);
         }
+
+		public Vector3D up() {
+			return new Vector3D(x, y+1, z);
+        }
     }
 }

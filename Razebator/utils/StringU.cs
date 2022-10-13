@@ -53,8 +53,15 @@ namespace HolyBot.Razebator.utils {
                 for (int i = 0; i < args.Count; i++) {
                     if (JsonU.isItValueOf<JValue>(args[i])) {
                         s += ((JValue)args[i]).ToObject<string>();
+                    
                     } else {
-                        //BotU.log(args[i].GetType().ToString()); da poshel ti nahuy
+                        BotU.log(args[i].GetType().ToString());
+                    }
+                }
+            } else if (json.ContainsKey("extra")) {
+                foreach (JObject extrapart in (JArray)json.GetValue("extra")) {
+                    if (extrapart.ContainsKey("text")) {
+                        s += extrapart.GetValue("text").Value<string>();
                     }
                 }
             }

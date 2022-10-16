@@ -1,5 +1,6 @@
 ﻿using HolyBot.Razebator.data;
 using HolyBot.Razebator.math;
+using HolyBot.Razebator.utils;
 using McProtoNet.Protocol340.Data.World.Chunk;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace HolyBot.Razebator.level {
     internal class Block {
         public Vector3D pos;
-        public int id;
+        public ushort id;
         public string displayName;
         public string name;
         public double hardnes;
@@ -22,16 +23,16 @@ namespace HolyBot.Razebator.level {
         public bool transparent;
         public double resistance;
 
-        public int metadata;
+        public byte metadata;
         
-        public Block(Vector3D pos) : this(pos, new BlockState(0,0)) {
+        public Block(Vector3D pos) : this(pos, new McProtoNet.Protocol340.Data.World.Chunk.Block(0,0)) {
 
         }
-        public Block(Vector3D pos, BlockState state) {
+        public Block(Vector3D pos, McProtoNet.Protocol340.Data.World.Chunk.Block state) {
             this.pos = pos;
             this.id = state.Id;
             this.metadata = state.Data;
-            DatamineBlock db = Level.blockList[new BlockState(id,this.metadata)];
+            DatamineBlock db = Level.blockList[new McProtoNet.Protocol340.Data.World.Chunk.Block(id,this.metadata)];
             if (db != null) {
                 this.displayName = db.displayName;
                 this.name = db.name;
@@ -109,7 +110,7 @@ namespace HolyBot.Razebator.level {
         public double maxY() {
             double d = double.MinValue;
             foreach (AABB h in hitbox) {
-                if (h.maxY < d)
+                if (h.maxY > d)
                     d = h.maxY;
             }
             if (d == Double.MinValue)

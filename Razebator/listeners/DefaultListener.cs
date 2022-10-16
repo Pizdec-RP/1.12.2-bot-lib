@@ -97,8 +97,10 @@ namespace HolyBot.Razebator.listeners {
             } else if (packet is ServerUnloadChunkPacket p5) {
                 // pohuy
             } else if (packet is ServerChunkDataPacket p6) {
-                Column col = p6.Column;
-                ChunkCoordinates cc = new ChunkCoordinates(col.X, col.Z);
+                
+                ChunkColumn col = p6.Column;
+                ChunkCoordinates cc = new ChunkCoordinates(p6.X, p6.Z);
+                //BotU.log("x:" + p6.X + " z:" + p6.Z);
                 if (client.world.columns.ContainsKey(cc)) {
                     client.world.columns[cc] = col;
                 } else {

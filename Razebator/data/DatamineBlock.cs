@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace HolyBot.Razebator.data {
     internal class DatamineBlock {
-        public int id;
-        public int metadata = 0;
+        public ushort id;
+        public byte metadata = 0;
         public string displayName;
         public string name;
         public double hardnes;

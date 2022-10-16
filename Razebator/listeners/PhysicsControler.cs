@@ -35,7 +35,6 @@ namespace HolyBot.Razebator.listeners {
         }
 
         public void tick() {
-
             if (!ready) {
                 if (client.getWorld().columns.ContainsKey(client.GetChunkCoordinates())) {
                     client.physics.chunkReceived = true;
@@ -64,14 +63,14 @@ namespace HolyBot.Razebator.listeners {
 
                 if (!VectorUtils.equals(before, nowPos)) {
                     if (nowYaw != beforeYaw || nowPitch != beforePitch) {
-                        //client.send(new ClientPlayerPositionRotationPacket(client.posX, client.posY, client.posZ, client.getYaw(), client.getPitch(), client.onGround));
+                        client.send(new ClientPlayerPositionRotationPacket(client.posX, client.posY, client.posZ, client.getYaw(), client.getPitch(), client.onGround));
                         //BotU.log("cpprp x"+client.posX+" y"+client.posY+" z"+client.posZ+" yaw"+client.getYaw()+" pitch"+client.getPitch());
                     } else {
-                        //client.send(new ClientPlayerPositionPacket(client.posX, client.posY, client.posZ, client.onGround));
+                        client.send(new ClientPlayerPositionPacket(client.posX, client.posY, client.posZ, client.onGround));
                         //BotU.log("cppp x"+client.posX+" y"+client.posY+" z"+client.posZ);
                     }
                 } else if (nowYaw != beforeYaw || nowPitch != beforePitch) {
-                    //client.send(new ClientPlayerRotationPacket(client.getYaw(), client.getPitch(), client.onGround));
+                    client.send(new ClientPlayerRotationPacket(client.getYaw(), client.getPitch(), client.onGround));
                     //BotU.log("cprp yaw"+client.getYaw()+" pitch"+client.getPitch());
                 }
                 before = nowPos;
@@ -265,6 +264,7 @@ namespace HolyBot.Razebator.listeners {
                     Block n = client.getWorld().getBlock(a.func_vf());
                     if (n.hitbox.Length > 0 && !n.isLiquid()) {
                         if (n.collide(nexttickY())) {
+                            BotU.log("y collided");
                             if (client.velY > 0) {
                                 if (n.minY() < client.getHitbox(client.velX,client.velY,client.velZ).maxY) {
                                     client.velY = 0;
@@ -272,6 +272,7 @@ namespace HolyBot.Razebator.listeners {
                                 }
                             } else {
                                 if (n.maxY() > client.posY + client.velY) {
+                                    
                                     client.velY = 0;
                                     client.setPosY(n.maxY());
                                     client.onGround = true;
@@ -281,6 +282,8 @@ namespace HolyBot.Razebator.listeners {
                                 }
                             }
                             break;
+                        } else {
+                            BotU.log(n.maxY());
                         }
                     }
                 }

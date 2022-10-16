@@ -37,5 +37,9 @@ namespace HolyBot.Razebator.level {
         public override int GetHashCode() {
             return HashCode.Combine(chunkX, chunkZ);
         }
+
+        public override string ToString() {
+			return "{x:" + chunkX + " z:" + chunkZ+"}";
+        }
     }
 }

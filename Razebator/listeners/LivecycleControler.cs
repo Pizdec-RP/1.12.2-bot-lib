@@ -1,5 +1,6 @@
 ﻿using HolyBot.Razebator.utils;
 using McProtoNet.Protocol340.Data;
+using McProtoNet.Protocol340.Data.World.Chunk;
 using McProtoNet.Protocol340.Packets.Client.Game;
 using System;
 using System.Collections.Generic;

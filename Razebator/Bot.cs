@@ -121,7 +121,7 @@ namespace HolyBot.Razebator {
             listeners.Add(new DefaultListener(this));
 
             physics = new PhysicsControler(this);
-            //controlers.Add(physics);
+            controlers.Add(physics);
 
             rl = new LivecycleControler(this);
             controlers.Add(rl);
@@ -166,11 +166,11 @@ namespace HolyBot.Razebator {
                 int raznica = (int)(timetwo - timeone);
                 if (needtocompensate > 5000) {
                     needtocompensate = 0;
-                    Console.WriteLine("client overloaded, skiped "+needtocompensate/tickrate+" ticks");
+                    //Console.WriteLine("client overloaded, skiped "+needtocompensate/tickrate+" ticks");
                 }
                 if (raznica > 0 && raznica < tickrate) {
                     curcomp = tickrate - raznica;
-                    Console.WriteLine("comp "+raznica+"ms");
+                    //Console.WriteLine("comp "+raznica+"ms");
                     if (needtocompensate <= 0) {
                         Thread.Sleep(curcomp);
                     } else {
@@ -183,7 +183,7 @@ namespace HolyBot.Razebator {
                         needtocompensate -= tickrate;
                     }
                 } else {
-                    Console.WriteLine("pass "+raznica+"ms");
+                    //Console.WriteLine("pass "+raznica+"ms");
                     needtocompensate += raznica - tickrate;
                 }
             }

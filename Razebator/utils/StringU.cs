@@ -7,43 +7,40 @@ using System.Threading.Tasks;
 
 namespace HolyBot.Razebator.utils {
     internal class StringU {
-        private static Dictionary<String, String> trnslt = new Dictionary<String, String>(); /*{
-           
-	    {
-    	    Put("й","N");
-            put("ц","|_|,");
-            put("у","y");
-            put("к","K");
-            put("е","e");
-            put("н","H");
-            put("г","G");
-            put("ш","|_|_|");
-            put("щ","|_|_|");
-            put("з","3");
-            put("х","x");
-            put("ъ","|o");
-            put("ф","o|o");
-            put("ы","|o |");
-            put("в","B");
-            put("а","a");
-            put("п","p");
-            put("р","P");
-            put("о","O");
-            put("л","L");
-            put("д","D");
-            put("ж","|-|-|");
-            put("э","3");
-            put("я","R");
-            put("ч","4");
-            put("с","C");
-            put("м","M");
-            put("и","N");
-            put("т","T");
-            put("ь","|o");
-            put("б","b");
-            put("ю","|-0");
-        }
-    };*/
+        private static Dictionary<string, string> trnslt = new Dictionary<String, String>() {
+    	    {"й","j" },
+            {"ц","tz"},
+            {"у","y"},
+            {"к","K"},
+            {"е","e"},
+            {"н","H"},
+            {"г","G"},
+            {"ш","sh"},
+            {"щ","sh"},
+            {"з","3"},
+            {"х","x"},
+            {"ъ",""},
+            {"ф","f"},
+            {"ы","i"},
+            {"в","B"},
+            {"а","a"},
+            {"п","p"},
+            {"р","P"},
+            {"о","O"},
+            {"л","L"},
+            {"д","D"},
+            {"ж","z"},
+            {"э","3"},
+            {"я","R"},
+            {"ч","4"},
+            {"с","C"},
+            {"м","M"},
+            {"и","N"},
+            {"т","T"},
+            {"ь","b"},
+            {"б","b"},
+            {"ю","u"},
+        };
         public static string formMsg(string message) {
             BotU.log(message);
             JObject json = JObject.Parse(message);
@@ -68,36 +65,6 @@ namespace HolyBot.Razebator.utils {
             return s;
         }
 
-        /*public static String componentToString(Component smth) {
-            //System.out.println(packet.getMessage().toString());
-            StringBuilder message = new StringBuilder();
-            if (smth instanceof TranslatableComponent) {
-            TranslatableComponent a = (TranslatableComponent)smth;
-            if (!a.args().isEmpty()) {
-                for (Component arg : a.args()) {
-                    if (arg instanceof TextComponent) {
-                        message.append(" ").append(((TextComponent)arg).content());
-                    }
-                }
-            }
-            if (!a.children().isEmpty()) {
-                for (Component chl : a.children()) {
-                    if (chl instanceof TextComponent) {
-                    message.append(" ").append(((TextComponent)chl).content());
-                }
-		    } else if (smth instanceof TextComponent) {
-                TextComponent a = (TextComponent)smth;
-                message.append((a).content());
-                if (!a.children().isEmpty()) {
-                    for (Component chl : a.children()) {
-                        if (chl instanceof TextComponent) {
-                        message.append(" ").append(((TextComponent)chl).content());
-                    }
-                }
-            }
-		    return message.toString();
-	    }*/
-
         public static bool contains(List<String> list, String what) {
             foreach (String str in list) {
                 if (str.Contains(what))
@@ -115,9 +82,9 @@ namespace HolyBot.Razebator.utils {
         }
     
         public static String translit(String text) {
-            //foreach (entry in trnslt) {
-                //text = text.replace(entry.getKey(), entry.getValue());
-            //}
+            foreach (KeyValuePair<string,string> entry in trnslt) {
+                text = text.Replace(entry.Key, entry.Value);
+            }
             return text;
         }
     

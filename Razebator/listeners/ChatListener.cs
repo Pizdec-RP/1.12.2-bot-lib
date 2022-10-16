@@ -22,7 +22,7 @@ namespace HolyBot.Razebator.listeners {
         public void onPacket(Packet p) {
             if (p is ServerChatMessagePacket p1) {
 				BotU.log("msg: "+ StringU.formMsg(p1.Message));
-                /*string[] ?command = messageToCommand(StringU.formMsg(p1.Message));
+                string[] ?command = messageToCommand(StringU.formMsg(p1.Message));
                 if (command == null || command.Length == 0) {
                     return;
                 } else {
@@ -32,7 +32,7 @@ namespace HolyBot.Razebator.listeners {
 						int z = int.Parse(command[3]);
 						client.chat(client.world.getBlock(x,y,z).displayName);
 					}
-                }*/
+                }
             }
         }
 

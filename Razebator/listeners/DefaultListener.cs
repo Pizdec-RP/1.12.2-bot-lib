@@ -95,7 +95,6 @@ namespace HolyBot.Razebator.listeners {
                     client.world.setBlock(change.Position, change.State.Id, change.State.Data);
                     
                 }
-                BotU.log("mbcp");
             } else if (packet is ServerUnloadChunkPacket p5) {
                 // pohuy
             } else if (packet is ServerChunkDataPacket p6) {
@@ -113,7 +112,6 @@ namespace HolyBot.Razebator.listeners {
                 }
             } else if (packet is ServerBlockChangePacket p7) {
                 client.world.setBlock(p7.Record.Position, p7.Record.State.Id, p7.Record.State.Data);
-                BotU.log("bcp");
             } else if (packet is LoginSuccessPacket p8) {
                 client.setUUID(p8.UUID);
             } else if (packet is ServerPlayerListEntryPacket p9) {

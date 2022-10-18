@@ -37,16 +37,16 @@ namespace HolyBot.Razebator.level {
                         skel.diggable = block.GetValue("diggable").ToObject<bool>();
                         skel.transparent = block.GetValue("transparent").ToObject<bool>();
                         skel.resistance = block.GetValue("resistance").ToObject<double>();
-
+                        int mn = 0;
                         foreach (JObject variation in (JArray)block.GetValue("variations")) {
                             DatamineBlock temp = skel.clone();
-                            int mn = 0;
+                            
                             //metadata, displayName, (description ignored)
                             if (variation.ContainsKey("displayName"))
                                 temp.displayName = variation.GetValue("displayName").ToObject<string>();
-                            
-                            temp.hitbox = getMultipileHitbox(skel.name, mn, variation.Count);
-                            blockList.Add(new McProtoNet.Protocol340.Data.World.Chunk.Block(temp.id,variation.GetValue("metadata").ToObject<byte>()), temp);
+                            byte metadataa = variation.GetValue("metadata").ToObject<byte>();
+                            temp.hitbox = getMultipileHitbox(skel.name, mn, ((JArray)block.GetValue("variations")).Count, metadataa);
+                            blockList.Add(new McProtoNet.Protocol340.Data.World.Chunk.Block(temp.id,metadataa), temp);
                             mn++;
                         }
                     //} catch (Exception ex) {
@@ -94,7 +94,7 @@ namespace HolyBot.Razebator.level {
                     columns[cords][chunkY] = new Chunk(16);
                     ch = columns[cords][chunkY];
                 }
-                ch[pos.X, pos.Y, pos.Z] = new McProtoNet.Protocol340.Data.World.Chunk.Block(id, data);
+                ch[blockX, blockY, blockZ] = new McProtoNet.Protocol340.Data.World.Chunk.Block(id, data);
                 
                 
             } catch (Exception e) {
@@ -143,7 +143,7 @@ namespace HolyBot.Razebator.level {
         public static string text = System.IO.File.ReadAllText(@".\datamine\colliders.json");
         public static JObject json = JObject.Parse(text);
 
-        public static AABB[] getMultipileHitbox(string blockname, int metadatanum, int statescount) {
+        public static AABB[] getMultipileHitbox(string blockname, int metadatanum, int statescount, int metadataa) {
             if (JsonU.isItValueOf<int>(json["blocks"][blockname])) {// hbid = 1
                 //Console.WriteLine("chck "+blockname);
                 int hbid = json["blocks"][blockname].Value<int>();
@@ -171,7 +171,10 @@ namespace HolyBot.Razebator.level {
                     }
                     return toreturn;
                 } else {
-                    //Console.WriteLine("polniy pizdec "+blockname);
+                    /*if (metadataa <= hitboxescount) {
+                        return new AABB[] { new AABB(json["shapes"][hbids[metadataa].ToString()].ToObject<double[]>())};
+                    }*/
+                    //Console.WriteLine("polniy pizdec "+blockname+" hc:"+hitboxescount+" sc:"+statescount+" i:"+ (hitboxescount % statescount));
                     return new AABB[] { new AABB(0, 0, 0, 1, 1, 1) };
                 }
             } else {

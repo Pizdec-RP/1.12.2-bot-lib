@@ -264,7 +264,6 @@ namespace HolyBot.Razebator.listeners {
                     Block n = client.getWorld().getBlock(a.func_vf());
                     if (n.hitbox.Length > 0 && !n.isLiquid()) {
                         if (n.collide(nexttickY())) {
-                            BotU.log("y collided");
                             if (client.velY > 0) {
                                 if (n.minY() < client.getHitbox(client.velX,client.velY,client.velZ).maxY) {
                                     client.velY = 0;
@@ -282,8 +281,6 @@ namespace HolyBot.Razebator.listeners {
                                 }
                             }
                             break;
-                        } else {
-                            BotU.log(n.maxY());
                         }
                     }
                 }

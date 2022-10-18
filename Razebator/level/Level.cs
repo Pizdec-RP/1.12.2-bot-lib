@@ -84,9 +84,21 @@ namespace HolyBot.Razebator.level {
                 int chunkX = pos.X >> 4;
                 int chunkY = pos.Y >> 4;
                 int chunkZ = pos.Z >> 4;
-                columns[new ChunkCoordinates(chunkX, chunkZ)][chunkY][pos.X, pos.Y, pos.Z] = new McProtoNet.Protocol340.Data.World.Chunk.Block(id,data);//[new ChunkCoordinates(chunkX, chunkZ)].Chunks[chunkY].Storage[pos.X, pos.Y, pos.Z] = new BlockState(id, data);//.getChunks()[chunkY].set(blockX, blockY, blockZ, state);
+                ChunkCoordinates cords = new ChunkCoordinates(chunkX, chunkZ);
+                ChunkColumn ?cc = columns[cords];
+                if (cc == null) {
+                    return;
+                }
+                Chunk? ch = cc[chunkY];
+                if (ch == null) {
+                    columns[cords][chunkY] = new Chunk(16);
+                    ch = columns[cords][chunkY];
+                }
+                ch[pos.X, pos.Y, pos.Z] = new McProtoNet.Protocol340.Data.World.Chunk.Block(id, data);
+                
+                
             } catch (Exception e) {
-                //e.printStackTrace();
+                Console.WriteLine(e.ToString());
             }
         }
 

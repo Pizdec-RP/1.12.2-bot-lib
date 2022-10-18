@@ -40,7 +40,7 @@ namespace HolyBot.Razebator.listeners {
                     (byte)5,
                     ChatVisibility.FULL,
                     false,
-                    new List<SkinPart>() { 
+                    new List<SkinPart>() {
                         SkinPart.JACKET,
                         SkinPart.LEFT_PANTS_LEG,
                         SkinPart.HAT,
@@ -63,7 +63,7 @@ namespace HolyBot.Razebator.listeners {
                 client.setPitch(p1.Pitch);
                 client.physics.beforePitch = p1.Pitch;
                 client.physics.beforeYaw = p1.Yaw;
-                BotU.log("pos packet received x:"+p1.X+" y:"+ p1.Y+ " z:"+ p1.Z+ " yaw:"+ p1.Yaw+ " pitch:"+ p1.Pitch);
+                BotU.log("pos packet received x:" + p1.X + " y:" + p1.Y + " z:" + p1.Z + " yaw:" + p1.Yaw + " pitch:" + p1.Pitch);
                 client.send(new ClientPlayerPositionRotationPacket(client.getPosX(), client.getPosY(), client.getPosZ(), client.getYaw(), client.getPitch(), client.onGround));
                 client.physics.posReceived = true;
                 if (!client.getWorld().columns.ContainsKey(client.GetChunkCoordinates())) {
@@ -93,7 +93,9 @@ namespace HolyBot.Razebator.listeners {
             } else if (packet is ServerMultiBlockChangePacket p4) {
                 foreach (BlockChangeRecord change in p4.Records) {
                     client.world.setBlock(change.Position, change.State.Id, change.State.Data);
+                    
                 }
+                BotU.log("mbcp");
             } else if (packet is ServerUnloadChunkPacket p5) {
                 // pohuy
             } else if (packet is ServerChunkDataPacket p6) {
@@ -111,6 +113,7 @@ namespace HolyBot.Razebator.listeners {
                 }
             } else if (packet is ServerBlockChangePacket p7) {
                 client.world.setBlock(p7.Record.Position, p7.Record.State.Id, p7.Record.State.Data);
+                BotU.log("bcp");
             } else if (packet is LoginSuccessPacket p8) {
                 client.setUUID(p8.UUID);
             } else if (packet is ServerPlayerListEntryPacket p9) {

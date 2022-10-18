@@ -41,7 +41,7 @@ namespace HolyBot.Razebator.level {
                 this.hitbox = new AABB[db.hitbox.Length];
                 int i = 0;
                 foreach (AABB h in db.hitbox) {
-                    this.hitbox[i] = h.clone();
+                    this.hitbox[i] = h.clone().offset(pos);
                     i++;
                 }
                 this.material = db.material;

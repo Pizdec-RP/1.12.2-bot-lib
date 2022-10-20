@@ -107,6 +107,17 @@ namespace HolyBot.Razebator.level {
             return hitbox.Length == 0;
         }
 
+        public bool canClickTrough() {
+            if (hitbox.Length == 0)
+                return true;
+
+            foreach (AABB h in hitbox) {
+                if (h.minX == 0 & h.minY == 0 && h.minZ == 0 && h.maxX == 1 && h.maxY == 1 && h.maxZ == 1)
+                    return false;
+            }
+            return true;
+        }
+
         public double maxY() {
             double d = double.MinValue;
             foreach (AABB h in hitbox) {

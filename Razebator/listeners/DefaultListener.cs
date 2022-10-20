@@ -33,7 +33,10 @@ namespace HolyBot.Razebator.listeners {
                 client.physics.ready = false;
                 client.physics.posReceived = false;
                 client.physics.chunkReceived = false;
+                client.dimension = p.Dimension;
+                client.worldType = p.WorldType;
                 //connected = true;
+                client.world.difficulty = p.Difficulty;
                 client.gamemode = p.GameMode;
                 client.send(new ClientSettingsPacket(
                     "ru",
@@ -119,6 +122,11 @@ namespace HolyBot.Razebator.listeners {
             } else if (packet is ServerResourcePackSendPacket p10) {
                 client.send(new ClientResourcePackStatusPacket(ResourcePackStatus.ACCEPTED));
                 client.send(new ClientResourcePackStatusPacket(ResourcePackStatus.SUCCESSFULLY_LOADED));
+            } else if (packet is ServerJoinGamePacket p11) {
+                if (p11.EntityId == client.getId()) {
+                    client.gamemode = p11.GameMode;
+                    p11.
+                }
             }
         }
     }

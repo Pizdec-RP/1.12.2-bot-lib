@@ -1,4 +1,5 @@
-﻿using System;
+﻿using McProtoNet.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,5 +164,10 @@ namespace HolyBot.Razebator.math
 		public Vector3D up() {
 			return new Vector3D(x, y+1, z);
         }
+
+		public Point3_Int translate() {
+			return new Point3_Int((int)Math.Floor(x), (int)Math.Floor(y), (int)Math.Floor(z));
+
+		}
     }
 }

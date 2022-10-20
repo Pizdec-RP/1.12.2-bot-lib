@@ -24,6 +24,7 @@ namespace HolyBot.Razebator {
         public String host;
         public ushort port;
 
+
         //listeners
         public List<SessionListener> listeners = new List<SessionListener>();
         public List<BotControler> controlers = new List<BotControler>();//it roll you cunt
@@ -48,17 +49,23 @@ namespace HolyBot.Razebator {
         public double health = 20;
         public double food = 10;
         public double saturation = 5;
-        public GameMode gamemode;
+        public GameMode gamemode = GameMode.SURVIVAL;
         public Effects effects = new Effects();
+        public EntityStorage entityStorage = new EntityStorage();
+        public int id;//bot entity id
+        public Guid uuid;
+        public int dimension;
+        public string worldType;
 
+        //
         public PhysicsControler physics;
         public LivecycleControler rl;
         public ChatListener chatListener;
+        public EntityListener entityListener;
 
-        int id;//bot entity id
-        Guid uuid;
-
+        //world
         public Level world;
+
 
         public Bot(String name, String host, Level ?worldlink) {
             this.name = name;
@@ -129,16 +136,20 @@ namespace HolyBot.Razebator {
             chatListener = new ChatListener(this);
             listeners.Add(chatListener);
 
+            entityListener = new EntityListener(this);
+            listeners.Add(entityListener);
+
             client.OnPacketReceived += (pm, packet) => {
                 //Console.WriteLine("packet: " + packet.GetType().Name);
                 foreach (SessionListener listener in listeners) {
                     listener.onPacket(packet);
                 }
             };
-            
+
             this.tickThread = new Thread(this.tickLoop);
-            this.tickThread.Start();
             running = true;
+            this.tickThread.Start();
+
             Console.WriteLine("bot connected");
             session.Login();
             return this;

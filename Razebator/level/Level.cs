@@ -2,6 +2,7 @@
 using HolyBot.Razebator.math;
 using HolyBot.Razebator.utils;
 using McProtoNet.Geometry;
+using McProtoNet.Protocol340.Data;
 using McProtoNet.Protocol340.Data.World.Chunk;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,7 +17,7 @@ namespace HolyBot.Razebator.level {
     internal class Level {
         public static Dictionary<McProtoNet.Protocol340.Data.World.Chunk.Block, DatamineBlock> blockList = new();// key = id + "." + metadata
         //JObject a;
-
+        public Difficulty difficulty = Difficulty.NORMAL;
         public Dictionary<ChunkCoordinates, ChunkColumn> columns = new Dictionary<ChunkCoordinates, ChunkColumn>();
 
         public static void load() {
